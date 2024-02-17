@@ -1,4 +1,4 @@
-from flask_restx import Namespace
+from app import api
 
 # Инициализация пространства имен для API
-api_namespace = Namespace('api', description='API operations')
+api_namespace = api.namespace('api', description='API operations')
