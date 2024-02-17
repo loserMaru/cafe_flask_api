@@ -1,14 +1,14 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float, create_engine
-from sqlalchemy.orm import relationship, declarative_base, sessionmaker
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float
+from sqlalchemy.orm import relationship
+
+from app.database import db
+
 
 # engine = create_engine(DATABASE_URL)
 # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # db = SessionLocal()
 
-Base = declarative_base()
-
-
-class CafeModel(Base):
+class CafeModel(db.Model):
     __tablename__ = "cafe"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -23,7 +23,7 @@ class CafeModel(Base):
     ratings = relationship("RatingModel", back_populates="cafe")
 
 
-class CoffeeModel(Base):
+class CoffeeModel(db.Model):
     __tablename__ = "coffee"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -36,7 +36,7 @@ class CoffeeModel(Base):
     products = relationship("ProductsModel", back_populates="coffee")
 
 
-class DrinksModel(Base):
+class DrinksModel(db.Model):
     __tablename__ = "drinks"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -51,14 +51,14 @@ class DrinksModel(Base):
     products = relationship("ProductsModel", back_populates="drinks")
 
 
-class DessertModel(Base):
+class DessertModel(db.Model):
     __tablename__ = "dessert"
 
     id = Column(Integer, primary_key=True, index=True)
     products = relationship("ProductsModel", back_populates="dessert")
 
 
-class WeightModel(Base):
+class WeightModel(db.Model):
     __tablename__ = "weight"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -73,7 +73,7 @@ class WeightModel(Base):
     orders = relationship("OrderModel", back_populates="weight")
 
 
-class OrderModel(Base):
+class OrderModel(db.Model):
     __tablename__ = "order"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -93,7 +93,7 @@ class OrderModel(Base):
     weight = relationship("WeightModel", back_populates="orders")
 
 
-class ProductsModel(Base):
+class ProductsModel(db.Model):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -108,7 +108,7 @@ class ProductsModel(Base):
     dessert = relationship("DessertModel", back_populates="products")
 
 
-class UserModel(Base):
+class UserModel(db.Model):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -120,7 +120,7 @@ class UserModel(Base):
     ratings = relationship("RatingModel", back_populates="user")
 
 
-class FavoriteModel(Base):
+class FavoriteModel(db.Model):
     __tablename__ = "favorite"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -131,7 +131,7 @@ class FavoriteModel(Base):
     user = relationship("UserModel", back_populates="favorites")
 
 
-class RatingModel(Base):
+class RatingModel(db.Model):
     __tablename__ = "rating"
 
     id = Column(Integer, primary_key=True, index=True)
