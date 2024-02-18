@@ -119,6 +119,13 @@ class UserModel(db.Model):
     favorites = relationship("FavoriteModel", back_populates="user")
     ratings = relationship("RatingModel", back_populates="user")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "role": self.role
+        }
+
 
 class FavoriteModel(db.Model):
     __tablename__ = "favorite"
