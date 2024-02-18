@@ -1,6 +1,24 @@
 from flask_restx import fields
-from app.api import api_namespace
+from app.api import api_namespace, user_namespace, login_namespace
 
+login_model = login_namespace.model('Login', {
+    'email': fields.String(required=True, description='The user email'),
+    'password': fields.String(required=True, description='The user password', mask=True)
+})
+
+user_model = user_namespace.model('User', {
+    'id': fields.Integer(readonly=True, description='The user identifier'),
+    'email': fields.String(required=True, default='user@example.com', description='The user email'),
+    'role': fields.String(default='user', description='The user role')
+})
+
+user_post_model = user_namespace.model('User', {
+    'id': fields.Integer(readonly=True),
+    'email': fields.String(default='string@gmail.com', required=True),
+    'password': fields.String(required=True, mask=True),
+    'confirm_password': fields.String(required=True, mask=True),
+    'role': fields.String(default='user'),
+})
 
 cafe_model = api_namespace.model('Cafe', {
     'id': fields.Integer(description='The cafe identifier'),
@@ -54,13 +72,6 @@ products_model = api_namespace.model('Products', {
     'drinks_id': fields.Integer(description='The ID of the drink'),
     'coffee_id': fields.Integer(description='The ID of the coffee'),
     'dessert_id': fields.Integer(description='The ID of the dessert')
-})
-
-user_model = api_namespace.model('User', {
-    'id': fields.Integer(description='The user identifier'),
-    'email': fields.String(description='The user email'),
-    'password': fields.String(description='The user password'),
-    'role': fields.String(description='The user role')
 })
 
 favorite_model = api_namespace.model('Favorite', {
