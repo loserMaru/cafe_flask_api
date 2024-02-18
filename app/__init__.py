@@ -1,26 +1,25 @@
 from flask import Flask
 from flask_restx import Api
 
+from app.api import api
+from app.api.resources.login import UserLogin, RefreshToken
 from app.api.resources.user import UserList, User
 from app.database import db
+from app.utils import jwt
+
 
 # Инициализация расширения Flask-RESTX
-api = Api(version='1.0', title='Cafe Flask Api', description='Swagger documentation for cafe app',
-          doc='/docs/', authorizations=
-          {'jwt': {
-              'type': 'apiKey',
-              'in': 'header',
-              'name': 'Authorization',
-              'description': 'JWT authorization, e.g. "token"'
-          }
-          })
-
 
 def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
-    db.init_app(app)
     api.init_app(app)
+    jwt.init_app(app)
+    db.init_app(app)
+
+    # Регистрация ресурсов API
+    api.add_resource(UserLogin, '/login')
+    api.add_resource(RefreshToken, '/refresh')
 
     # Регистрация ресурсов API
     api.add_resource(UserList, '/users')
