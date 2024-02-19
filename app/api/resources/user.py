@@ -1,4 +1,5 @@
 from flask import request
+from flask_jwt_extended import jwt_required
 from flask_restx import Resource
 from sqlalchemy.exc import IntegrityError
 
@@ -12,7 +13,8 @@ from app.utils.password_utils import hash_password
 
 @user_namespace.route('/')
 class UserList(Resource):
-    @user_namespace.doc('list_users')
+    @user_namespace.doc(security='jwt')
+    @jwt_required()
     @user_namespace.marshal_list_with(user_model)
     def get(self):
         """Список всех пользователей"""
