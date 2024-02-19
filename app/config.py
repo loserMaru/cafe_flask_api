@@ -21,3 +21,4 @@ ALGORITHM = os.getenv("ALGORITHM")
 FLASK_DEBUG = int(os.getenv("FLASK_DEBUG"))  # Включаем отладочный режим, если DEBUG=True
 
 # Дополнительные настройки, такие как настройки веб-сервера, кэширования и т. д.
+JWT_AUTH_HEADER_PREFIX = os.getenv("JWT_AUTH_HEADER_PREFIX")
