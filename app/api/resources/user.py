@@ -71,16 +71,16 @@ class User(Resource):
         data = request.json
         for key, value in data.items():
             setattr(user, key, value)
-        db.commit()
-        return user.serialize()
+        db.session.commit()
+        return user
 
     @user_namespace.doc('delete_user')
-    @user_namespace.marshal_with(user_model)
+    @user_namespace.response(204, 'User deleted')
     def delete(self, user_id):
         """Удалить пользователя"""
         user = UserModel.query.get(user_id)
         if not user:
             user_namespace.abort(404, "User not found")
-        db.delete(user)
-        db.commit()
-        return '', 204
+        db.session.delete(user)
+        db.session.commit()
+        return {'msg': 'User deleted'}, 204
