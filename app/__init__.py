@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_restx import Api
 
 from app.api import api
 from app.api.resources.login import UserLogin, RefreshToken
