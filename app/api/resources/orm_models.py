@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float, Date
 from sqlalchemy.orm import relationship
 
 from app.database import db
@@ -16,9 +16,8 @@ class CafeModel(db.Model):
     address = Column(String(255), index=True)
     description = Column(Text, index=True)
 
-    drinks = relationship("DrinksModel", back_populates="cafe")
     orders = relationship("OrderModel", back_populates="cafe")
-    products = relationship("ProductsModel", back_populates="cafe")
+    coffee = relationship("CoffeeModel", back_populates="cafe")
     favorites = relationship("FavoriteModel", back_populates="cafe")
     ratings = relationship("RatingModel", back_populates="cafe")
 
@@ -29,48 +28,11 @@ class CoffeeModel(db.Model):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(45), index=True)
     description = Column(Text, index=True)
-    location = Column(String(255), index=True)
-
-    weights = relationship("WeightModel", back_populates="coffee")
-    orders = relationship("OrderModel", back_populates="coffee")
-    products = relationship("ProductsModel", back_populates="coffee")
-
-
-class DrinksModel(db.Model):
-    __tablename__ = "drinks"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(45), index=True)
-    description = Column(Text, index=True)
 
     cafe_id = Column(Integer, ForeignKey("cafe.id"))
 
-    cafe = relationship("CafeModel", back_populates="drinks")
-    weights = relationship("WeightModel", back_populates="drinks")
-    orders = relationship("OrderModel", back_populates="drinks")
-    products = relationship("ProductsModel", back_populates="drinks")
-
-
-class DessertModel(db.Model):
-    __tablename__ = "dessert"
-
-    id = Column(Integer, primary_key=True, index=True)
-    products = relationship("ProductsModel", back_populates="dessert")
-
-
-class WeightModel(db.Model):
-    __tablename__ = "weight"
-
-    id = Column(Integer, primary_key=True, index=True)
-    weight = Column(String(45), index=True)
-    price = Column(Integer, index=True)
-
-    coffee_id = Column(Integer, ForeignKey("coffee.id"))
-    drinks_id = Column(Integer, ForeignKey("drinks.id"))
-
-    coffee = relationship("CoffeeModel", back_populates="weights")
-    drinks = relationship("DrinksModel", back_populates="weights")
-    orders = relationship("OrderModel", back_populates="weight")
+    orders = relationship("OrderModel", back_populates="coffee")
+    cafe = relationship("CafeModel", back_populates="coffee")
 
 
 class OrderModel(db.Model):
@@ -79,33 +41,27 @@ class OrderModel(db.Model):
     id = Column(Integer, primary_key=True, index=True)
     status = Column(String(45), index=True)
     total_price = Column(Float, index=True)
-    count = Column(Integer, index=True)
-    drink_type = Column(String(45), index=True)
 
     cafe_id = Column(Integer, ForeignKey("cafe.id"))
-    drinks_id = Column(Integer, ForeignKey("drinks.id"))
     coffee_id = Column(Integer, ForeignKey("coffee.id"))
-    weight_id = Column(Integer, ForeignKey("weight.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
 
     cafe = relationship("CafeModel", back_populates="orders")
-    drinks = relationship("DrinksModel", back_populates="orders")
     coffee = relationship("CoffeeModel", back_populates="orders")
-    weight = relationship("WeightModel", back_populates="orders")
+    user = relationship("UserModel", back_populates="orders")
 
 
-class ProductsModel(db.Model):
-    __tablename__ = "products"
+class SubscriptionModel(db.Model):
+    __tablename__ = "subscription"
 
     id = Column(Integer, primary_key=True, index=True)
-    cafe_id = Column(Integer, ForeignKey("cafe.id"))
-    drinks_id = Column(Integer, ForeignKey("drinks.id"))
-    coffee_id = Column(Integer, ForeignKey("coffee.id"))
-    dessert_id = Column(Integer, ForeignKey("dessert.id"))
+    start_date = Column(Date, index=True)
+    end_date = Column(Date, index=True)
+    quantity = Column(Integer, index=True)
 
-    cafe = relationship("CafeModel", back_populates="products")
-    drinks = relationship("DrinksModel", back_populates="products")
-    coffee = relationship("CoffeeModel", back_populates="products")
-    dessert = relationship("DessertModel", back_populates="products")
+    user_id = Column(Integer, ForeignKey("user.id"))
+
+    user = relationship("UserModel", back_populates="subscriptions")
 
 
 class UserModel(db.Model):
@@ -118,6 +74,8 @@ class UserModel(db.Model):
 
     favorites = relationship("FavoriteModel", back_populates="user")
     ratings = relationship("RatingModel", back_populates="user")
+    order = relationship("OrderModel", back_populates="user")
+    subscription = relationship("SubscriptionModel", back_populates="user")
 
     def to_dict(self):
         return {
