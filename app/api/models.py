@@ -2,7 +2,7 @@ from flask_restx import fields
 from app.api import api_namespace, user_namespace, login_namespace
 
 login_model = login_namespace.model('Login', {
-    'email': fields.String(required=True, description='The user email'),
+    'email': fields.String(default='user@example.com', required=True, description='The user email'),
     'password': fields.String(required=True, description='The user password', mask=True)
 })
 
@@ -14,7 +14,7 @@ user_model = user_namespace.model('User', {
 
 user_post_model = user_namespace.model('User', {
     'id': fields.Integer(readonly=True),
-    'email': fields.String(default='string@gmail.com', required=True),
+    'email': fields.String(default='user@example.com', required=True),
     'password': fields.String(required=True, mask=True),
     'confirm_password': fields.String(required=True, mask=True),
     'role': fields.String(default='user'),
