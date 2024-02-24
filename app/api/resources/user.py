@@ -1,5 +1,6 @@
+import sqlalchemy
 from flask import request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restx import Resource
 from sqlalchemy.exc import IntegrityError
 
@@ -17,8 +18,10 @@ class UserList(Resource):
     @jwt_required()
     @user_namespace.marshal_list_with(user_model)
     def get(self):
-        """Список всех пользователей"""
-        users = UserModel.query.all()
+        """Получение данных о пользователе"""
+        current_user_id = get_jwt_identity()
+        user_id = current_user_id['id']  # Extract the id value from the dictionary
+        users = UserModel.query.filter_by(id=user_id).all()
         return users
 
     @user_namespace.doc('create_user')
@@ -49,20 +52,10 @@ class UserList(Resource):
 
 
 @user_namespace.route('/<int:user_id>')
-@user_namespace.param('user_id', 'The user identifier')
-@user_namespace.response(404, 'User not found')
 class User(Resource):
-    @user_namespace.doc('get_user')
-    @user_namespace.marshal_with(user_model)
-    def get(self, user_id):
-        """Получить информацию о пользователе"""
-        user = UserModel.query.get(user_id)
-        if not user:
-            user_namespace.abort(404, "User not found")
-        return user, 200
-
     @user_namespace.doc('update_user')
     @user_namespace.marshal_with(user_model)
+    @user_namespace.expect(user_post_model)
     def put(self, user_id):
         """Обновить информацию о пользователе"""
         user = UserModel.query.get(user_id)
@@ -74,13 +67,23 @@ class User(Resource):
         db.session.commit()
         return user
 
-    @user_namespace.doc('delete_user')
-    @user_namespace.response(204, 'User deleted')
+    @user_namespace.doc(responses={
+        200: 'Успешный DELETE-запрос, ресурс удален',
+        401: 'Неавторизованный доступ',
+        404: 'Ресурс не найден'
+    })
+    @user_namespace.doc(security='jwt')
+    @jwt_required()
     def delete(self, user_id):
-        """Удалить пользователя"""
+        """Delete user account"""
         user = UserModel.query.get(user_id)
         if not user:
-            user_namespace.abort(404, "User not found")
-        db.session.delete(user)
-        db.session.commit()
-        return {'msg': 'User deleted'}, 204
+            user_namespace.abort(404, message='Пользователь с id {} не найден'.format(user_id))
+        try:
+            db.session.delete(user)
+            db.session.commit()
+            return {'msg': 'Пользователь удален'}, 200
+        except sqlalchemy.exc.IntegrityError as e:
+            db.session.rollback()
+            return {'msg': 'Ошибка. У пользователя есть внешние ключи'}, 200
+
