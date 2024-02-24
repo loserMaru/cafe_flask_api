@@ -9,3 +9,23 @@ class UserSchema(Schema):
 
 
 user_schema = UserSchema()
+
+
+class CafeSchema(Schema):
+    id = fields.Integer()
+    name = fields.String()
+    address = fields.String()
+    description = fields.String()
+
+
+cafe_schema = CafeSchema()
+
+
+class CoffeeSchema(Schema):
+    id = fields.Integer()
+    name = fields.String()
+    description = fields.String()
+    cafe_id = fields.Integer()
+
+
+coffee_schema = CoffeeSchema()
