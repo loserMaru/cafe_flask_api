@@ -74,8 +74,8 @@ class UserModel(db.Model):
 
     favorites = relationship("FavoriteModel", back_populates="user")
     ratings = relationship("RatingModel", back_populates="user")
-    order = relationship("OrderModel", back_populates="user")
-    subscription = relationship("SubscriptionModel", back_populates="user")
+    orders = relationship("OrderModel", back_populates="user")
+    subscriptions = relationship("SubscriptionModel", back_populates="user")
 
     def to_dict(self):
         return {
