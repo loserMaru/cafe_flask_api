@@ -20,3 +20,4 @@ login_namespace = api.namespace('Login', description='JWT-token receiving', path
 user_namespace = api.namespace('Users', description='Users operations', path='/user', doc='')
 cafe_namespace = api.namespace('Cafe', description='Cafe operations', path='/cafe', doc='')
 coffee_namespace = api.namespace('Coffee', description='Cafe operations', path='/coffee', doc='')
+order_namespace = api.namespace('Orders', description='Orders operations', path='/orders', doc='')
