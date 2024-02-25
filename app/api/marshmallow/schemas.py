@@ -29,3 +29,15 @@ class CoffeeSchema(Schema):
 
 
 coffee_schema = CoffeeSchema()
+
+
+class OrderSchema(Schema):
+    id = fields.Integer()
+    status = fields.String()
+    total_price = fields.Float()
+    cafe_id = fields.Integer()
+    coffee_id = fields.Integer()
+    user_id = fields.Integer()
+
+
+order_schema = OrderSchema()
