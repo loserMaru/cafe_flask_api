@@ -44,7 +44,6 @@ class OrderList(Resource):
         current_user = get_jwt_identity()
         user_id = current_user.get('id')
         order = OrderModel(user_id=user_id, **data)  # Вставляем user_id из JWT токена
-        print(order)
         db.session.add(order)
         try:
             db.session.commit()
