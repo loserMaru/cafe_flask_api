@@ -19,6 +19,6 @@ ALGORITHM = os.getenv("ALGORITHM")
 
 # Другие настройки приложения
 FLASK_DEBUG = int(os.getenv("FLASK_DEBUG"))  # Включаем отладочный режим, если DEBUG=True
-
+PROPAGATE_EXCEPTIONS = os.getenv("PROPAGATE_EXCEPTIONS")
 # Дополнительные настройки, такие как настройки веб-сервера, кэширования и т. д.
 JWT_AUTH_HEADER_PREFIX = os.getenv("JWT_AUTH_HEADER_PREFIX")
