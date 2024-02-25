@@ -34,13 +34,22 @@ coffee_model = api_namespace.model('Coffee', {
     'cafe_id': fields.Integer(description='The ID of the cafe')
 })
 
-order_model = api_namespace.model('Order', {
-    'id': fields.Integer(description='The order identifier'),
+order_post_model = api_namespace.model('Order', {
+    'id': fields.Integer(readonly=True, description='The order identifier'),
     'status': fields.String(description='The order status'),
     'total_price': fields.Float(description='The order total price'),
     'cafe_id': fields.Integer(description='The ID of the cafe'),
     'coffee_id': fields.Integer(description='The ID of the coffee'),
-    'user_id': fields.Integer(description='The ID of the user')
+})
+
+
+order_model = api_namespace.model('Order', {
+    'id': fields.Integer(readonly=True, description='The order identifier'),
+    'status': fields.String(description='The order status'),
+    'total_price': fields.Float(description='The order total price'),
+    'cafe_id': fields.Integer(description='The ID of the cafe'),
+    'coffee_id': fields.Integer(description='The ID of the coffee'),
+    'user_id': fields.Integer(readonly=True, description='The ID of the user')
 })
 
 favorite_model = api_namespace.model('Favorite', {
