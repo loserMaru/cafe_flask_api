@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, jsonify
+from flask_jwt_extended.exceptions import NoAuthorizationError
 
 from app.api import api
 from app.utils import jwt
@@ -34,4 +35,10 @@ def create_app():
     api.add_resource(CafeList, '/cafe')
     api.add_resource(Cafe, '/cafe/<int:cafe_id>')
 
+    @app.errorhandler(NoAuthorizationError)
+    def handle_missing_authorization_header_error(error):
+        return jsonify({'message': 'Вы не авторизованы'}), 401
     return app
+
+
+app = create_app()
