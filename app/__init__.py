@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_jwt_extended.exceptions import NoAuthorizationError
 
 from app.api import api
+from app.api.resources.subscription import SubscriptionList
 from app.utils import jwt
 from app.database import db
 from app.api.resources.cafe import CafeList, Cafe
@@ -40,9 +41,14 @@ def create_app():
     api.add_resource(OrderList, '/orders')
     api.add_resource(Order, '/orders/<int:order_id>')
 
+    # Регистрация ресурсов API для подписок
+    api.add_resource(SubscriptionList, '/subscription')
+
+    # Регистрация обработчиков ошибок
     @app.errorhandler(NoAuthorizationError)
     def handle_missing_authorization_header_error(error):
         return jsonify({'message': 'Вы не авторизованы'}), 401
+
     return app
 
 
