@@ -21,3 +21,5 @@ user_namespace = api.namespace('Users', description='Users operations', path='/u
 cafe_namespace = api.namespace('Cafe', description='Cafe operations', path='/cafe', doc='')
 coffee_namespace = api.namespace('Coffee', description='Cafe operations', path='/coffee', doc='')
 order_namespace = api.namespace('Orders', description='Orders operations', path='/orders', doc='')
+subscription_namespace = api.namespace('Subscription', description='Subscription operations', path='/subscription',
+                                       doc='')
