@@ -52,6 +52,14 @@ order_model = api_namespace.model('Order', {
     'user_id': fields.Integer(readonly=True, description='The ID of the user')
 })
 
+subscription_model = api_namespace.model('Subscription', {
+    'id': fields.Integer(readonly=True, description='The subscription identifier'),
+    'start_date': fields.Date(readonly=True, description='The subscription start date'),
+    'end_date': fields.Date(readonly=True, description='The subscription end date'),
+    'quantity': fields.Integer(description='The subscription quantity'),
+    'user_id': fields.Integer(readonly=True, description='The ID of the user')
+})
+
 favorite_model = api_namespace.model('Favorite', {
     'id': fields.Integer(description='The favorite identifier'),
     'cafe_id': fields.Integer(description='The ID of the cafe'),
