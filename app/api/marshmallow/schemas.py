@@ -41,3 +41,14 @@ class OrderSchema(Schema):
 
 
 order_schema = OrderSchema()
+
+
+class SubscriptionSchema(Schema):
+    id = fields.Integer()
+    start_date = fields.Date()
+    end_date = fields.Date()
+    quantity = fields.Integer()
+    user_id = fields.Integer()
+
+
+subscription_schema = SubscriptionSchema()
