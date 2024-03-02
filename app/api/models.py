@@ -61,9 +61,9 @@ subscription_model = api_namespace.model('Subscription', {
 })
 
 favorite_model = api_namespace.model('Favorite', {
-    'id': fields.Integer(description='The favorite identifier'),
+    'id': fields.Integer(readonly=True, description='The favorite identifier'),
     'cafe_id': fields.Integer(description='The ID of the cafe'),
-    'user_id': fields.Integer(description='The ID of the user')
+    'user_id': fields.Integer(readonly=True, description='The ID of the user')
 })
 
 rating_model = api_namespace.model('Rating', {
