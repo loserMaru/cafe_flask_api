@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_jwt_extended.exceptions import NoAuthorizationError
 
 from app.api import api
+from app.api.resources.favorite import FavoriteList, Favorite
 from app.api.resources.subscription import SubscriptionList
 from app.utils import jwt
 from app.database import db
@@ -43,6 +44,10 @@ def create_app():
 
     # Регистрация ресурсов API для подписок
     api.add_resource(SubscriptionList, '/subscription')
+
+    # Регистрация ресурсов API для избранных
+    api.add_resource(FavoriteList, '/favorite')
+    api.add_resource(Favorite, '/favorite/<int:favorite_id>')
 
     # Регистрация обработчиков ошибок
     @app.errorhandler(NoAuthorizationError)
