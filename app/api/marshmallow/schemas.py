@@ -52,3 +52,12 @@ class SubscriptionSchema(Schema):
 
 
 subscription_schema = SubscriptionSchema()
+
+
+class FavoriteSchema(Schema):
+    id = fields.Integer()
+    cafe_id = fields.Integer()
+    user_id = fields.Integer()
+
+
+favorite_schema = FavoriteSchema()
