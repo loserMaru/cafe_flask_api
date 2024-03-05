@@ -3,7 +3,6 @@ from flask_jwt_extended.exceptions import NoAuthorizationError
 
 from app.api import api
 from app.api.resources.favorite import FavoriteList, Favorite
-from app.api.resources.subscription import SubscriptionList
 from app.utils import jwt
 from app.database import db
 from app.api.resources.cafe import CafeList, Cafe
@@ -11,6 +10,7 @@ from app.api.resources.user import UserList, User
 from app.api.resources.order import OrderList, Order
 from app.api.resources.coffee import CoffeeList, Coffee
 from app.api.resources.login import UserLogin, RefreshToken
+from app.api.resources.subscription import SubscriptionList, Subscription
 
 
 # Инициализация расширения Flask-RESTX
@@ -44,6 +44,7 @@ def create_app():
 
     # Регистрация ресурсов API для подписок
     api.add_resource(SubscriptionList, '/subscription')
+    api.add_resource(Subscription, '/subscription/<int:subscription_id>')
 
     # Регистрация ресурсов API для избранных
     api.add_resource(FavoriteList, '/favorite')
