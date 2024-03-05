@@ -8,7 +8,7 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/cafe_flask_api</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="cafe_flask_api@localhost" uuid="fc7652cc-c52d-42e7-9233-6210349adb1b">
+    <data-source source="LOCAL" name="cafe_flask_api@localhost [2]" uuid="da573a1a-597c-451a-a2eb-345c03c333d1">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
