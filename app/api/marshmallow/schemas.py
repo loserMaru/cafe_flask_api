@@ -16,6 +16,7 @@ class CafeSchema(Schema):
     name = fields.String()
     address = fields.String()
     description = fields.String()
+    image = fields.String()
 
 
 cafe_schema = CafeSchema()
@@ -25,6 +26,7 @@ class CoffeeSchema(Schema):
     id = fields.Integer()
     name = fields.String()
     description = fields.String()
+    image = fields.String()
     cafe_id = fields.Integer()
 
 
