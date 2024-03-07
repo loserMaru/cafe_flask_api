@@ -15,6 +15,7 @@ class CafeModel(db.Model):
     name = Column(String(45), index=True)
     address = Column(String(255), index=True)
     description = Column(Text, index=True)
+    image = Column(Text, index=True)
 
     orders = relationship("OrderModel", back_populates="cafe")
     coffee = relationship("CoffeeModel", back_populates="cafe")
@@ -28,6 +29,7 @@ class CoffeeModel(db.Model):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(45), index=True)
     description = Column(Text, index=True)
+    image = Column(Text, index=True)
 
     cafe_id = Column(Integer, ForeignKey("cafe.id"))
 
