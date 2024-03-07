@@ -24,14 +24,16 @@ cafe_model = api_namespace.model('Cafe', {
     'id': fields.Integer(readonly=True, description='The cafe identifier'),
     'name': fields.String(required=True, description='The cafe name'),
     'address': fields.String(required=True, description='The cafe address'),
-    'description': fields.String(required=True, description='The cafe description')
+    'description': fields.String(required=True, description='The cafe description'),
+    'image': fields.String(required=False, description='Cafe image')
 })
 
 coffee_model = api_namespace.model('Coffee', {
     'id': fields.Integer(readonly=True, description='The coffee identifier'),
     'name': fields.String(description='The coffee name'),
     'description': fields.String(description='The coffee description'),
-    'cafe_id': fields.Integer(description='The ID of the cafe')
+    'cafe_id': fields.Integer(description='The ID of the cafe'),
+    'image': fields.String(required=False, description='Coffee image')
 })
 
 order_post_model = api_namespace.model('Order', {
