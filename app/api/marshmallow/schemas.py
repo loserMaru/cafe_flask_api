@@ -63,3 +63,13 @@ class FavoriteSchema(Schema):
 
 
 favorite_schema = FavoriteSchema()
+
+
+class RatingSchema(Schema):
+    id = fields.Integer()
+    rating = fields.Float()
+    cafe_id = fields.Integer()
+    user_id = fields.Integer()
+
+
+rating_schema = RatingSchema()
