@@ -14,7 +14,8 @@ from app.api.resources.orm_models import SubscriptionModel
 
 @subscription_namespace.route('/')
 class SubscriptionList(Resource):
-    @subscription_namespace.doc(security='jwt')
+    @subscription_namespace.doc(security='jwt',
+                                responses={200: 'OK', 400: 'Bad Request', 404: 'Not Found'})
     @jwt_required()
     @subscription_namespace.marshal_with(subscription_model)
     def get(self):
@@ -22,6 +23,8 @@ class SubscriptionList(Resource):
         current_user_id = get_jwt_identity()
         user_id = current_user_id['id']  # Extract the id value from the dictionary
         subscriptions = SubscriptionModel.query.filter_by(user_id=user_id).all()
+        if not subscriptions:
+            subscription_namespace.abort(400, "Вы не подписаны")
         return subscriptions
 
     @subscription_namespace.doc(security='jwt')
@@ -31,17 +34,21 @@ class SubscriptionList(Resource):
     def post(self):
         """Создание подписки"""
         data = request.json
+        print(data)
         current_user = get_jwt_identity()
         user_id = current_user.get('id')
 
         # Проверка наличия подписки у данного пользователя
         existing_subscription = SubscriptionModel.query.filter_by(user_id=user_id).first()
         if existing_subscription:
-            return {'msg': 'У вас уже есть активная подписка'}
+            subscription_namespace.abort(400, "У вас уже есть активная подписка")
 
         start_date = datetime.date.today()
         data['start_date'] = start_date
-
+        # Проверяем наличие 'quantity' во входных данных JSON и устанавливаем значение по умолчанию, если его нет
+        quantity = data.get('quantity', 1)  # Устанавливаем значение по умолчанию как 1, если 'quantity' отсутствует
+        if quantity < 1:
+            subscription_namespace.abort(400, "Quantity должно быть больше 0")
         end_date = start_date + datetime.timedelta(days=30)
         end_date = end_date.replace(day=start_date.day)
         data['end_date'] = end_date
@@ -52,7 +59,7 @@ class SubscriptionList(Resource):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            subscription_namespace.abort(400, "Something wrong")
+            subscription_namespace.abort(400, "Ошибка при добавлении в БД")
         return subscription
 
 
@@ -66,7 +73,7 @@ class Subscription(Resource):
         """Обновить информацию о подписке"""
         subscription = SubscriptionModel.query.get(subscription_id)
         if not subscription:
-            subscription_namespace.abort(404, "Subscription not found")
+            subscription_namespace.abort(404, "Подписка не найдена")
         data = request.json
         for key, value in data.items():
             setattr(subscription, key, value)
