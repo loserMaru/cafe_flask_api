@@ -69,8 +69,8 @@ favorite_model = api_namespace.model('Favorite', {
 })
 
 rating_model = api_namespace.model('Rating', {
-    'id': fields.Integer(description='The rating identifier'),
+    'id': fields.Integer(readonly=True, description='The rating identifier'),
     'rating': fields.Float(description='The rating value'),
     'cafe_id': fields.Integer(description='The ID of the cafe'),
-    'user_id': fields.Integer(description='The ID of the user')
+    'user_id': fields.Integer(readonly=True, description='The ID of the user')
 })
