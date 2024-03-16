@@ -21,6 +21,7 @@ user_namespace = api.namespace('Users', description='Users operations', path='/u
 cafe_namespace = api.namespace('Cafe', description='Cafe operations', path='/cafe', doc='')
 coffee_namespace = api.namespace('Coffee', description='Cafe operations', path='/coffee', doc='')
 order_namespace = api.namespace('Orders', description='Orders operations', path='/orders', doc='')
+favorite_namespace = api.namespace('Favorite', description='Favorite operations', path='/favorite', doc='')
+rating_namespace = api.namespace('Rating', description='Rating operations', path='/rating', doc='')
 subscription_namespace = api.namespace('Subscription', description='Subscription operations', path='/subscription',
                                        doc='')
-favorite_namespace = api.namespace('Favorite', description='Favorite operations', path='/favorite', doc='')
