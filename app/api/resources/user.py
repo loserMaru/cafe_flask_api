@@ -53,7 +53,7 @@ class UserList(Resource):
 
 @user_namespace.route('/<int:user_id>')
 class User(Resource):
-    @user_namespace.doc('update_user')
+    @user_namespace.doc(security='jwt')
     @user_namespace.marshal_with(user_model)
     @user_namespace.expect(user_post_model)
     def put(self, user_id):
