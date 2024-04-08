@@ -64,4 +64,4 @@ class Rating(Resource):
             raise NotFound("Rating not found.")
         db.session.delete(rating)
         db.session.commit()
-        return '', 204
+        return {'msg': 'Оценка удалена'}, 200
