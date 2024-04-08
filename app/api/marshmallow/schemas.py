@@ -17,6 +17,7 @@ class CafeSchema(Schema):
     address = fields.String()
     description = fields.String()
     image = fields.String()
+    star = fields.Float()
 
 
 cafe_schema = CafeSchema()
