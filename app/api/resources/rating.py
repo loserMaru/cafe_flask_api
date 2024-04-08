@@ -52,14 +52,14 @@ class RatingList(Resource):
         return rating
 
 
-@rating_namespace.route('/<int:id>')
+@rating_namespace.route('/<int:rating_id>')
 class Rating(Resource):
     @rating_namespace.doc(security='jwt')
     @jwt_required()
     @rating_namespace.marshal_list_with(rating_model)
-    def delete(self, id):
+    def delete(self, rating_id):
         """Удаление рейтинга"""
-        rating = RatingModel.query.filter_by(id=id).first()
+        rating = RatingModel.query.filter_by(id=rating_id).first()
         if not rating:
             raise NotFound("Rating not found.")
         db.session.delete(rating)

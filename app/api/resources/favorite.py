@@ -54,9 +54,9 @@ class Favorite(Resource):
     @favorite_namespace.doc(security='jwt')
     @jwt_required()
     @favorite_namespace.marshal_with(favorite_model)
-    def get(self, id):
+    def get(self, favorite_id):
         """Get favorite cafe by id"""
-        favorite = FavoriteModel.query.get(id)
+        favorite = FavoriteModel.query.get(favorite_id)
         if not favorite:
             favorite_namespace.abort(404, 'Избранное не найдено')
         return favorite, 200
@@ -64,9 +64,9 @@ class Favorite(Resource):
     @favorite_namespace.doc(security='jwt')
     @jwt_required()
     @favorite_namespace.expect(favorite_model)
-    def put(self, id):
+    def put(self, favorite_id):
         """Edit favorite cafe by id"""
-        favorite = FavoriteModel.query.filter_by(id=id).first()
+        favorite = FavoriteModel.query.filter_by(id=favorite_id).first()
         if not favorite:
             favorite_namespace.abort(404, 'Избранное не найдено')
         favorite.user_id = favorite_namespace.payload['user_id']
@@ -80,12 +80,12 @@ class Favorite(Resource):
 
     @favorite_namespace.doc(security='jwt')
     @jwt_required()
-    def delete(self, id):
+    def delete(self, favorite_id):
         """Delete favorite cafe by cafe_id"""
         current_user_id = get_jwt_identity().get('id')
 
         # Поиск избранного по cafe_id и user_id
-        favorite = FavoriteModel.query.filter_by(cafe_id=id, user_id=current_user_id).first()
+        favorite = FavoriteModel.query.filter_by(id=favorite_id, user_id=current_user_id).first()
 
         if not favorite:
             favorite_namespace.abort(404, 'Избранное не найдено')
