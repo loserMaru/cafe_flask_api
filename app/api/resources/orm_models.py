@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float, Date
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float, Date, func
 from sqlalchemy.orm import relationship
 
 from app.database import db
@@ -16,13 +16,26 @@ class CafeModel(db.Model):
     address = Column(String(255), index=True)
     description = Column(Text, index=True)
     image = Column(Text, index=True)
+    star = db.Column(db.Float(), nullable=False)
 
     orders = relationship("OrderModel", back_populates="cafe")
     coffee = relationship("CoffeeModel", back_populates="cafe")
     favorites = relationship("FavoriteModel", back_populates="cafe")
     ratings = relationship("RatingModel", back_populates="cafe")
 
+    def calculate_average_rating(self):
+        average_rating = db.session.query(func.avg(RatingModel.rating)).filter_by(cafe_id=self.id).scalar()
+        return average_rating if average_rating is not None else 0.0
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'address': self.address,
+            'description': self.description,
+            'image': self.image,
+            'star': self.star
+        }
 class CoffeeModel(db.Model):
     __tablename__ = "coffee"
 
