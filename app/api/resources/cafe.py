@@ -22,7 +22,16 @@ class CafeList(Resource):
     def get(self):
         """Получение данных о кафе"""
         cafes = CafeModel.query.all()
-        return cafes
+
+        # Обновление среднего рейтинга для каждого ресторана
+        for cafe in cafes:
+            cafe.star = cafe.calculate_average_rating()
+
+        db.session.commit()  # Сохранение изменений в базе данных
+
+        # Преобразование объектов в словари и возврат списка ресторанов
+        cafe_data = [cafe.to_dict() for cafe in cafes]
+        return cafe_data, 200
 
     @cafe_namespace.doc(security='jwt')
     @jwt_required()
