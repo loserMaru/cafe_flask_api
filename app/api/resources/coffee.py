@@ -1,7 +1,10 @@
+import os
+
 import sqlalchemy
 from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restx import Resource
+from imgurpython import ImgurClient
 from sqlalchemy.exc import IntegrityError
 
 from app.api import coffee_namespace
@@ -83,3 +86,43 @@ class Coffee(Resource):
         except sqlalchemy.exc.IntegrityError as e:
             db.session.rollback()
             return {'msg': 'Ошибка. У вида кофе есть связанные объекты'}, 200
+
+
+@coffee_namespace.route('/<int:coffee_id>/pic')
+class UploadCoffeePic(Resource):
+    @coffee_namespace.doc(security='jwt')
+    @coffee_namespace.expect(coffee_namespace.parser().add_argument('image', location='files', type='file'))
+    def put(self, coffee_id):
+        """Give picture for profile by his ID"""
+        coffee = CoffeeModel.query.filter_by(id=coffee_id).first()
+        if not coffee:
+            coffee_namespace.abort(404, 'Профиль не найден')
+
+        client_id = os.getenv("CLIENT_ID")
+        client_secret = os.getenv("CLIENT_SECRET")
+
+        client = ImgurClient(client_id, client_secret)
+
+        image = request.files.get('image')
+        print(image)
+        if not image:
+            return {'message': 'No image uploaded'}, 400
+
+        # Save the image to a temporary directory
+        temp_dir = os.path.join(os.getcwd(), 'temp')
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+        image_path = os.path.join(temp_dir, image.filename)
+        image.save(image_path)
+
+        # Upload the image to imgur
+        response = client.upload_from_path(image_path)
+
+        # Remove the temporary file
+        os.remove(image_path)
+
+        # Update profile picture
+        coffee.image = response['link']
+        db.session.commit()
+
+        return coffee_schema.dump(coffee), 201
