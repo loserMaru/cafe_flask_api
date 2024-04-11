@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="cafe_flask_api@localhost" uuid="2cc444af-08cb-4c85-a3c2-a22ee25fa149">
+    <data-source source="LOCAL" name="cafe_flask_api@localhost" uuid="0d1eb518-ccc6-4166-bb02-fbcbcea91440">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
