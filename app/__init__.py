@@ -7,7 +7,7 @@ from app.database import db
 from app.api.resources.cafe import CafeList, Cafe, UploadCafePic
 from app.api.resources.user import UserList, User
 from app.api.resources.order import OrderList, Order
-from app.api.resources.coffee import CoffeeList, Coffee
+from app.api.resources.coffee import CoffeeList, Coffee, UploadCoffeePic
 from app.api.resources.rating import RatingList, Rating
 from app.api.resources.login import UserLogin, RefreshToken
 from app.api.resources.favorite import FavoriteList, Favorite
@@ -34,6 +34,7 @@ def create_app():
     # Регистрация ресурсов API для кофе
     api.add_resource(CoffeeList, '/coffee')
     api.add_resource(Coffee, '/coffee/<int:coffee_id>')
+    api.add_resource(UploadCoffeePic, '/cafe/<int:coffee_id>/pic')
 
     # Регистрация ресурсов API для кафе
     api.add_resource(CafeList, '/cafe')
