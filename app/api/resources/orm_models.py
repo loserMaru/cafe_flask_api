@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float, Date, func
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, Float, Date, func, DateTime
 from sqlalchemy.orm import relationship
 
 from app.database import db
@@ -56,6 +56,7 @@ class OrderModel(db.Model):
     id = Column(Integer, primary_key=True, index=True)
     status = Column(String(45), index=True)
     total_price = Column(Float, index=True)
+    time = Column(DateTime, index=True)
 
     cafe_id = Column(Integer, ForeignKey("cafe.id"))
     coffee_id = Column(Integer, ForeignKey("coffee.id"))

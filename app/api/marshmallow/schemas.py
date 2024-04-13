@@ -38,9 +38,10 @@ class OrderSchema(Schema):
     id = fields.Integer()
     status = fields.String()
     total_price = fields.Float()
-    cafe_id = fields.Integer()
-    coffee_id = fields.Integer()
+    coffee = fields.Nested(coffee_schema)
     user_id = fields.Integer()
+    cafe_id = fields.Integer()
+    time = fields.DateTime()
 
 
 order_schema = OrderSchema()
