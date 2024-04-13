@@ -45,14 +45,20 @@ order_post_model = api_namespace.model('Order', {
     'coffee_id': fields.Integer(description='The ID of the coffee'),
 })
 
-
 order_model = api_namespace.model('Order', {
     'id': fields.Integer(readonly=True, description='The order identifier'),
     'status': fields.String(description='The order status'),
     'total_price': fields.Float(description='The order total price'),
+    'coffee': fields.Nested(api_namespace.model('Coffee', {
+        'id': fields.Integer(readonly=True, description='The coffee identifier'),
+        'name': fields.String(description='The coffee name'),
+        'description': fields.String(description='The coffee description'),
+        'cafe_id': fields.Integer(description='The ID of the cafe'),
+        'image': fields.String(required=False, description='Coffee image')
+    })),
+    'user_id': fields.Integer(readonly=True, description='The ID of the user'),
     'cafe_id': fields.Integer(description='The ID of the cafe'),
-    'coffee_id': fields.Integer(description='The ID of the coffee'),
-    'user_id': fields.Integer(readonly=True, description='The ID of the user')
+    'time': fields.DateTime(readonly=True, description='The order time')
 })
 
 subscription_model = api_namespace.model('Subscription', {
