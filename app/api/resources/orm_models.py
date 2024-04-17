@@ -36,6 +36,8 @@ class CafeModel(db.Model):
             'image': self.image,
             'star': self.star
         }
+
+
 class CoffeeModel(db.Model):
     __tablename__ = "coffee"
 
