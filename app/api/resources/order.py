@@ -1,18 +1,18 @@
-from datetime import datetime
-
-import pytz
 import sqlalchemy
+
 from flask import request
-from flask_restx import Resource
 from sqlalchemy import and_
+from flask_restx import Resource
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.database import db
+
 from app.api import order_namespace
-from app.api.models import order_model, order_post_model
-from app.api.resources.orm_models import OrderModel, CoffeeModel, CafeModel, SubscriptionModel
+from app.api.models import order_model
+from app.utils.time_utils import get_current_time
 from app.api.marshmallow.schemas import order_schema
+from app.api.resources.orm_models import OrderModel, CoffeeModel, CafeModel, SubscriptionModel
 
 
 @order_namespace.route('/')
@@ -50,10 +50,9 @@ class OrderList(Resource):
         coffee_data = data.pop('coffee', None)  # Извлекаем данные о кофе из запроса
 
         # Получаем текущее время в часовом поясе UTC+3
-        timezone = pytz.timezone('Europe/Moscow')
-        current_time = datetime.now(timezone)
+        current_time = get_current_time()
 
-        order = OrderModel(user_id=user_id, time=current_time, **data)  # Вставляем user_id из JWT токена
+        order = OrderModel(user_id=user_id, time_order_made=current_time, **data)  # Вставляем user_id из JWT токена
 
         user_subscription = SubscriptionModel.query.filter_by(user_id=user_id).first()
         if not user_subscription or user_subscription.quantity == 0:
