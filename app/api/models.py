@@ -34,23 +34,20 @@ coffee_model = api_namespace.model('Coffee', {
     'id': fields.Integer(readonly=True, description='The coffee identifier'),
     'name': fields.String(description='The coffee name'),
     'description': fields.String(description='The coffee description'),
-    'cafe_id': fields.Integer(description='The ID of the cafe'),
-    'image': fields.String(required=False, description='Coffee image')
-})
-
-order_post_model = api_namespace.model('Order', {
-    'id': fields.Integer(readonly=True, description='The order identifier'),
-    'status': fields.String(description='The order status'),
-    'total_price': fields.Float(description='The order total price'),
-    'cafe_id': fields.Integer(description='The ID of the cafe'),
-    'coffee_id': fields.Integer(description='The ID of the coffee'),
+    'image': fields.String(required=False, description='Coffee image'),
+    'cafe': fields.Nested(api_namespace.model('CafeCoffee', {
+        'id': fields.Integer(readonly=True, description='The cafe identifier'),
+        'name': fields.String(description='The cafe name'),
+        'address': fields.String(readonly=True, description='The cafe address'),
+        'description': fields.String(readonly=True, description='The cafe description')
+    }))
 })
 
 order_model = api_namespace.model('Order', {
     'id': fields.Integer(readonly=True, description='The order identifier'),
     'status': fields.String(readonly=True, description='The order status', default='waiting'),
     'total_price': fields.Float(description='The order total price'),
-    'coffee': fields.Nested(api_namespace.model('Coffee', {
+    'coffee': fields.Nested(api_namespace.model('CoffeeOrder', {
         'id': fields.Integer(readonly=True, description='The coffee identifier'),
         'name': fields.String(description='The coffee name'),
         'description': fields.String(readonly=True, description='The coffee description'),
