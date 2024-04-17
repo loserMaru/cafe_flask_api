@@ -16,12 +16,19 @@ from app.api.resources.orm_models import CafeModel
 
 @cafe_namespace.route('/')
 class CafeList(Resource):
+    @cafe_namespace.expect(cafe_namespace.parser().add_argument('Name', type=str, help='Filter by name'))
     @cafe_namespace.doc(security='jwt')
     @jwt_required()
     @cafe_namespace.marshal_list_with(cafe_model)
     def get(self):
         """Получение данных о кафе"""
-        cafes = CafeModel.query.all()
+        filter_by_name = request.args.get('Name')
+        cafes = CafeModel.query
+
+        if filter_by_name:
+            cafes = cafes.filter(CafeModel.name.ilike(f'%{filter_by_name}%'))
+
+        cafes = cafes.all()
 
         # Обновление среднего рейтинга для каждого ресторана
         for cafe in cafes:
