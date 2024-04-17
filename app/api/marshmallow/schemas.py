@@ -41,7 +41,8 @@ class OrderSchema(Schema):
     coffee = fields.Nested(coffee_schema)
     user_id = fields.Integer()
     cafe_id = fields.Integer()
-    time = fields.DateTime()
+    time_order_made = fields.DateTime()
+    pick_up_time = fields.DateTime()
 
 
 order_schema = OrderSchema()

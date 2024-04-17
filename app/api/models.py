@@ -1,5 +1,6 @@
 from flask_restx import fields
 from app.api import api_namespace, user_namespace, login_namespace
+from app.utils.time_utils import get_current_time
 
 login_model = login_namespace.model('Login', {
     'email': fields.String(default='user@example.com', required=True, description='The user email'),
@@ -47,18 +48,19 @@ order_post_model = api_namespace.model('Order', {
 
 order_model = api_namespace.model('Order', {
     'id': fields.Integer(readonly=True, description='The order identifier'),
-    'status': fields.String(description='The order status'),
+    'status': fields.String(readonly=True, description='The order status', default='waiting'),
     'total_price': fields.Float(description='The order total price'),
     'coffee': fields.Nested(api_namespace.model('Coffee', {
         'id': fields.Integer(readonly=True, description='The coffee identifier'),
         'name': fields.String(description='The coffee name'),
-        'description': fields.String(description='The coffee description'),
+        'description': fields.String(readonly=True, description='The coffee description'),
         'cafe_id': fields.Integer(description='The ID of the cafe'),
-        'image': fields.String(required=False, description='Coffee image')
+        'image': fields.String(readonly=True, description='Coffee image')
     })),
+    'pick_up_time': fields.DateTime(required=True, description='The pick up time', default=get_current_time()),
     'user_id': fields.Integer(readonly=True, description='The ID of the user'),
     'cafe_id': fields.Integer(description='The ID of the cafe'),
-    'time': fields.DateTime(readonly=True, description='The order time')
+    'time_order_made': fields.DateTime(readonly=True, description='The order time'),
 })
 
 subscription_model = api_namespace.model('Subscription', {

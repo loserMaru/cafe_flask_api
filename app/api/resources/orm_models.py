@@ -56,7 +56,8 @@ class OrderModel(db.Model):
     id = Column(Integer, primary_key=True, index=True)
     status = Column(String(45), index=True)
     total_price = Column(Float, index=True)
-    time = Column(DateTime, index=True)
+    pick_up_time = Column(DateTime, index=True)
+    time_order_made = Column(DateTime, index=True)
 
     cafe_id = Column(Integer, ForeignKey("cafe.id"))
     coffee_id = Column(Integer, ForeignKey("coffee.id"))
