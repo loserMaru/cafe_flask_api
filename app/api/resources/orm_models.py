@@ -54,7 +54,7 @@ class OrderModel(db.Model):
     __tablename__ = "order"
 
     id = Column(Integer, primary_key=True, index=True)
-    status = Column(String(45), index=True)
+    status = Column(String(45), index=True, default='waiting')
     total_price = Column(Float, index=True)
     pick_up_time = Column(DateTime, index=True)
     time_order_made = Column(DateTime, index=True)
