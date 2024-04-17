@@ -10,33 +10,57 @@ from sqlalchemy.exc import IntegrityError
 from app.api import coffee_namespace
 from app.api.marshmallow.schemas import coffee_schema
 from app.api.models import coffee_model
-from app.api.resources.orm_models import CoffeeModel
+from app.api.resources.orm_models import CoffeeModel, CafeModel
 from app.database import db
 
 
 @coffee_namespace.route('/')
 class CoffeeList(Resource):
+    @coffee_namespace.expect(coffee_namespace.parser().add_argument('Name', type=str, help='Filter by name'))
     @coffee_namespace.doc(security='jwt')
     @jwt_required()
     @coffee_namespace.marshal_list_with(coffee_model)
     def get(self):
         """Получение данных о кофе"""
-        coffees = CoffeeModel.query.all()
+        filter_by_name = request.args.get('Name')
+        coffees = CoffeeModel.query
+
+        if filter_by_name:
+            coffees = coffees.filter(CoffeeModel.name.ilike(f'%{filter_by_name}%'))
+
+        coffees = coffees.all()
         return coffees
 
-    @coffee_namespace.doc('create_coffee')
+    @coffee_namespace.doc(security='jwt')
+    @jwt_required()
     @coffee_namespace.expect(coffee_model)
     @coffee_namespace.marshal_with(coffee_model)
     def post(self):
         """Создание нового вида кофе"""
         data = request.json
+        coffee_name = data.get('name')
+        cafe_name = data.get('cafe', {}).get('name')
+        data.pop('cafe', None)
         coffee = CoffeeModel(**data)
+        # data = data.pop('cafe', None)
+
+        # Проверяем существование кафе с указанным именем в базе данных
+        cafe = CafeModel.query.filter_by(name=cafe_name).first()
+
+        if cafe:  # Если кафе найдено
+            # Создаем кофе и связываем его с найденным кафе
+            coffee = CoffeeModel(name=coffee_name, description=data.get('description'), cafe_id=cafe.id,
+                                 image=data.get('image'))
+        else:  # Если кафе не найдено
+            coffee_namespace.abort(404, "Кафе не найдено")
+
         db.session.add(coffee)
         try:
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
             coffee_namespace.abort(400, "Ошибка. Такой вид кофе уже существует")
+
         return coffee_schema.dump(coffee), 201
 
 
