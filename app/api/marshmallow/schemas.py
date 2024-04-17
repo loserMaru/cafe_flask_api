@@ -28,7 +28,7 @@ class CoffeeSchema(Schema):
     name = fields.String()
     description = fields.String()
     image = fields.String()
-    cafe_id = fields.Integer()
+    cafe = fields.Nested(cafe_schema)
 
 
 coffee_schema = CoffeeSchema()
