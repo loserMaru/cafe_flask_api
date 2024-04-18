@@ -34,11 +34,21 @@ class CoffeeSchema(Schema):
 coffee_schema = CoffeeSchema()
 
 
+class CoffeeForOrderSchema(Schema):
+    id = fields.Integer()
+    name = fields.String()
+    description = fields.String()
+    image = fields.String()
+    cafe_id = fields.Integer()
+
+
+coffee_for_order_schema = CoffeeForOrderSchema()
+
+
 class OrderSchema(Schema):
     id = fields.Integer()
     status = fields.String()
-    total_price = fields.Float()
-    coffee = fields.Nested(coffee_schema)
+    coffee = fields.Nested(coffee_for_order_schema)
     user_id = fields.Integer()
     cafe_id = fields.Integer()
     time_order_made = fields.DateTime()
