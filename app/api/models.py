@@ -46,7 +46,6 @@ coffee_model = api_namespace.model('Coffee', {
 order_model = api_namespace.model('Order', {
     'id': fields.Integer(readonly=True, description='The order identifier'),
     'status': fields.String(readonly=True, description='The order status', default='waiting'),
-    'total_price': fields.Float(description='The order total price'),
     'coffee': fields.Nested(api_namespace.model('CoffeeOrder', {
         'id': fields.Integer(readonly=True, description='The coffee identifier'),
         'name': fields.String(description='The coffee name'),
