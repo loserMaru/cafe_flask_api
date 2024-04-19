@@ -48,6 +48,7 @@ coffee_for_order_schema = CoffeeForOrderSchema()
 class OrderSchema(Schema):
     id = fields.Integer()
     status = fields.String()
+    name = fields.String()
     coffee = fields.Nested(coffee_for_order_schema)
     user_id = fields.Integer()
     cafe_id = fields.Integer()

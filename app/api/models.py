@@ -46,6 +46,7 @@ coffee_model = api_namespace.model('Coffee', {
 order_model = api_namespace.model('Order', {
     'id': fields.Integer(readonly=True, description='The order identifier'),
     'status': fields.String(readonly=True, description='The order status', default='waiting'),
+    'name': fields.String(description='The client name', default='Ivan Ivanov'),
     'coffee': fields.Nested(api_namespace.model('CoffeeOrder', {
         'id': fields.Integer(readonly=True, description='The coffee identifier'),
         'name': fields.String(description='The coffee name'),
@@ -57,6 +58,10 @@ order_model = api_namespace.model('Order', {
     'user_id': fields.Integer(readonly=True, description='The ID of the user'),
     'cafe_id': fields.Integer(description='The ID of the cafe'),
     'time_order_made': fields.DateTime(readonly=True, description='The order time'),
+})
+
+order_put_model = api_namespace.model('OrderPut', {
+    'status': fields.String(description='The order status'),
 })
 
 subscription_model = api_namespace.model('Subscription', {
