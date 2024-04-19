@@ -48,42 +48,57 @@ class OrderList(Resource):
         current_user = get_jwt_identity()
         user_id = current_user.get('id')
         coffee_data = data.pop('coffee', None)  # Извлекаем данные о кофе из запроса
+        cafe_data = data.pop('cafe', None)  # Извлекаем данные о кафе из запроса
 
         # Получаем текущее время в часовом поясе UTC+3
         current_time = get_current_time()
 
-        order = OrderModel(user_id=user_id, time_order_made=current_time, **data)  # Вставляем user_id из JWT токена
+        if not cafe_data:
+            order_namespace.abort(400, "Данные о кафе не указаны в запросе")
+            return
+
+        cafe_name = cafe_data.get('name')  # Извлекаем название кафе из данных о кафе
+        if not cafe_name:
+            order_namespace.abort(400, "Название кафе не указано в запросе")
+            return
+
+        # Находим кафе в базе данных по названию
+        cafe = CafeModel.query.filter_by(name=cafe_name).first()
+        if not cafe:
+            order_namespace.abort(404, "Кафе с указанным названием не найдено")
+            return
+
+        cafe_id = cafe.id  # Получаем id кафе из базы данных
+
+        # Проверяем совпадение cafe_id из данных о кофе с реальным id кафе из базы данных
+        if cafe_id != coffee_data.get('cafe_id'):
+            order_namespace.abort(400, "Ошибка. Кофе с указанным названием не продаётся в данном кафе")
+            return
+
+        order_data = {
+            'user_id': user_id,
+            'time_order_made': current_time,
+            'cafe_id': cafe_id,
+            **data  # Передаем оставшиеся данные из запроса
+        }
+
+        order = OrderModel(**order_data)  # Вставляем user_id из JWT токена
 
         user_subscription = SubscriptionModel.query.filter_by(user_id=user_id).first()
         if not user_subscription or user_subscription.quantity == 0:
             order_namespace.abort(400, "Ошибка. Вы не можете совершать заказы. Пожалуйста, продлите подписку.")
             return
 
-        cafe = CafeModel.query.get(data['cafe_id'])
-        if not cafe:
-            order_namespace.abort(404, "Кафе с указанным идентификатором не найдено")
-            return
-
         if coffee_data:  # Если есть данные о кофе
-            if data['cafe_id'] != coffee_data['cafe_id']:
-                order_namespace.abort(400, "Ошибка. В данном кафе такого кофе не существует")
-                return
-
             # Проверяем существование кофе в базе данных по названию и идентификатору кафе
             existing_coffee = CoffeeModel.query.filter(
-                and_(CoffeeModel.name == coffee_data['name'], CoffeeModel.cafe_id == coffee_data['cafe_id'])).first()
+                and_(CoffeeModel.name == coffee_data['name'], CoffeeModel.cafe_id == cafe_id)).first()
 
             if existing_coffee:  # Если кофе уже существует
                 coffee = existing_coffee
             else:  # Если кофе не существует
                 order_namespace.abort(404, "Кофе с указанным названием и идентификатором кафе не найден")
                 return  # Досрочный выход из функции, чтобы избежать создания заказа
-
-            try:
-                db.session.commit()  # Фиксируем изменения, чтобы получить ID кофе
-            except IntegrityError:
-                db.session.rollback()
-                order_namespace.abort(400, "Ошибка. Невозможно создать заказ")
 
             order.coffee_id = coffee.id  # Привязываем кофе к заказу
 
