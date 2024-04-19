@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.database import db
 
 from app.api import order_namespace
-from app.api.models import order_model
+from app.api.models import order_model, order_put_model
 from app.utils.time_utils import get_current_time
 from app.api.marshmallow.schemas import order_schema
 from app.api.resources.orm_models import OrderModel, CoffeeModel, CafeModel, SubscriptionModel
@@ -119,15 +119,31 @@ class Order(Resource):
 
     @order_namespace.doc(security='jwt')
     @jwt_required()
-    def delete(self, order_id):
-        """Удаление заказа"""
+    @order_namespace.expect(order_put_model)
+    @order_namespace.marshal_with(order_model)
+    def put(self, order_id):
+        """Обновление информации о заказе"""
         order = OrderModel.query.get(order_id)
         if not order:
-            order_namespace.abort(404, message='Заказ с id {} не найден'.format(order_id))
-        try:
-            db.session.delete(order)
-            db.session.commit()
-            return {'msg': 'Заказ удален'}, 200
-        except sqlalchemy.exc.IntegrityError as e:
-            db.session.rollback()
-            return {'msg': 'Ошибка. Невозможно удалить заказ'}, 200
+            order_namespace.abort(404, "Вид кофе не найден")
+        data = request.json
+        for key, value in data.items():
+            setattr(order, key, value)
+        db.session.commit()
+        return order_schema.dump(order)
+
+
+@order_namespace.doc(security='jwt')
+@jwt_required()
+def delete(self, order_id):
+    """Удаление заказа"""
+    order = OrderModel.query.get(order_id)
+    if not order:
+        order_namespace.abort(404, message='Заказ с id {} не найден'.format(order_id))
+    try:
+        db.session.delete(order)
+        db.session.commit()
+        return {'msg': 'Заказ удален'}, 200
+    except sqlalchemy.exc.IntegrityError as e:
+        db.session.rollback()
+        return {'msg': 'Ошибка. Невозможно удалить заказ'}, 200
