@@ -10,7 +10,8 @@ login_model = login_namespace.model('Login', {
 user_model = user_namespace.model('User', {
     'id': fields.Integer(readonly=True, description='The user identifier'),
     'email': fields.String(required=True, default='user@example.com', description='The user email'),
-    'role': fields.String(default='user', description='The user role')
+    'role': fields.String(default='user', description='The user role'),
+    'cafe_id': fields.Integer(required=False, description='The cafe identifier')
 })
 
 user_post_model = user_namespace.model('User', {

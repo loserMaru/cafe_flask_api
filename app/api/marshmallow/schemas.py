@@ -6,6 +6,7 @@ class UserSchema(Schema):
     email = fields.String()
     password = fields.String()
     role = fields.String()
+    cafe_id = fields.Integer()
 
 
 user_schema = UserSchema()

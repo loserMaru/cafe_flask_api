@@ -22,6 +22,7 @@ class CafeModel(db.Model):
     coffee = relationship("CoffeeModel", back_populates="cafe")
     favorites = relationship("FavoriteModel", back_populates="cafe")
     ratings = relationship("RatingModel", back_populates="cafe")
+    users = relationship("UserModel", back_populates='cafe')
 
     def calculate_average_rating(self):
         average_rating = db.session.query(func.avg(RatingModel.rating)).filter_by(cafe_id=self.id).scalar()
@@ -87,9 +88,12 @@ class UserModel(db.Model):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(255), index=True)
+    email = Column(String(255), index=True, unique=True)
     password = Column(String(255), index=True)
     role = Column(String(45), index=True)
+    cafe_id = Column(Integer, ForeignKey("cafe.id"))
+
+    cafe = relationship("CafeModel", back_populates="users")
 
     favorites = relationship("FavoriteModel", back_populates="user")
     ratings = relationship("RatingModel", back_populates="user")
@@ -100,7 +104,8 @@ class UserModel(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            "role": self.role
+            "role": self.role,
+            "cafe_id": self.cafe_id
         }
 
 
