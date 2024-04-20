@@ -47,7 +47,7 @@ class UserList(Resource):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            user_namespace.abort(400, "Email already registered")
+            user_namespace.abort(400, "Аккаунт с таким email уже зарегистрирован")
         return user_schema.dump(user), 201
 
 
