@@ -23,18 +23,19 @@ class OrderList(Resource):
     def get(self):
         """Получение списка заказов"""
         current_user = get_jwt_identity()  # Получаем информацию о текущем пользователе из JWT
-        user_role = current_user.get('role')  # Предполагается, что в JWT есть информация о роли пользователя
+        user_cafe_id = current_user.get('cafe_id')  # Предполагается, что в JWT есть информация о cafe_id пользователя
+        user_role = current_user.get('role')
 
-        if user_role == 'user':
-            # Фильтрация заказов по user_id, чтобы пользователь видел только свои заказы
-            user_id = current_user.get('id')
-            orders = OrderModel.query.filter_by(user_id=user_id).all()
-        elif user_role == 'moderator':
-            # Модератор видит все заказы
-            orders = OrderModel.query.all()
+        if user_role == 'user' and not user_cafe_id:
+            orders = OrderModel.query.filter_by(user_id=current_user.get('id')).all()
+
+        elif user_cafe_id:
+            # Если у пользователя есть cafe_id, выводим все заказы с соответствующим cafe_id
+            orders = OrderModel.query.filter_by(cafe_id=user_cafe_id).all()
+
         else:
-            # Другие роли могут обрабатываться по-разному или возвращать ошибку доступа
-            return {'message': 'Доступ запрещен'}, 403
+            # Если у пользователя нет cafe_id, возвращаем ошибку доступа
+            order_namespace.abort(403, "Доступ запрещен")
 
         return orders
 
@@ -138,9 +139,17 @@ class Order(Resource):
     @order_namespace.marshal_with(order_model)
     def put(self, order_id):
         """Обновление информации о заказе"""
+        current_user = get_jwt_identity()
+        user_role = current_user.get('role')
+        print(user_role)
+
+        if user_role != 'admin':
+            order_namespace.abort(403, "У вас нет прав для выполнения данного действия")
+
         order = OrderModel.query.get(order_id)
         if not order:
             order_namespace.abort(404, "Вид кофе не найден")
+
         data = request.json
         for key, value in data.items():
             setattr(order, key, value)
