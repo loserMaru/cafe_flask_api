@@ -1,5 +1,6 @@
 import sqlalchemy
 from flask import request
+from flask_bcrypt import generate_password_hash
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restx import Resource
 from sqlalchemy.exc import IntegrityError
@@ -62,6 +63,13 @@ class User(Resource):
         if not user:
             user_namespace.abort(404, "User not found")
         data = request.json
+
+        # Проверяем, есть ли пароль в данных
+        if 'password' in data:
+            # Хэшируем пароль перед сохранением в базу данных
+            hashed_password = hash_password(data['password'])
+            data['password'] = hashed_password
+
         for key, value in data.items():
             setattr(user, key, value)
         db.session.commit()
