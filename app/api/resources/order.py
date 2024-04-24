@@ -9,10 +9,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.database import db
 
 from app.api import order_namespace
-from app.api.models import order_model, order_put_model
+from app.api.models import order_model, order_put_model, order_post_model
 from app.utils.time_utils import get_current_time
 from app.api.marshmallow.schemas import order_schema
-from app.api.resources.orm_models import OrderModel, CoffeeModel, CafeModel, SubscriptionModel
+from app.api.resources.orm_models import OrderModel, CoffeeModel, CafeModel, SubscriptionModel, UserModel
 
 
 @order_namespace.route('/')
@@ -41,7 +41,7 @@ class OrderList(Resource):
 
     @order_namespace.doc(security='jwt')
     @jwt_required()
-    @order_namespace.expect(order_model)
+    @order_namespace.expect(order_post_model)
     @order_namespace.marshal_with(order_model)
     def post(self):
         """Создание нового заказа"""
@@ -50,6 +50,7 @@ class OrderList(Resource):
         user_id = current_user.get('id')
         coffee_data = data.pop('coffee', None)  # Извлекаем данные о кофе из запроса
         cafe_data = data.pop('cafe', None)  # Извлекаем данные о кафе из запроса
+        smartphone_key = data.pop('smartphone_key', None)
 
         # Получаем текущее время в часовом поясе UTC+3
         current_time = get_current_time()
@@ -85,6 +86,10 @@ class OrderList(Resource):
 
         order = OrderModel(**order_data)  # Вставляем user_id из JWT токена
 
+        user_phone_key = UserModel.query.filter_by(id=user_id).first()
+        if not user_phone_key:
+            order_namespace.abort(400, "Ошибка при нахождении данных о пользователе")
+
         user_subscription = SubscriptionModel.query.filter_by(user_id=user_id).first()
         if not user_subscription or user_subscription.quantity == 0:
             order_namespace.abort(400, "Ошибка. Вы не можете совершать заказы. Пожалуйста, продлите подписку.")
@@ -117,6 +122,14 @@ class OrderList(Resource):
         except IntegrityError:
             db.session.rollback()
             order_namespace.abort(500, "Ошибка при обновлении подписки пользователя")
+
+        user_phone_key.smartphone_key = smartphone_key
+
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            order_namespace.abort(500, "Ошибка добавления phone key пользователю")
 
         return order_schema.dump(order), 201
 
