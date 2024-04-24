@@ -14,7 +14,7 @@ user_model = user_namespace.model('User', {
     'cafe_id': fields.Integer(required=False, description='The cafe identifier')
 })
 
-user_post_model = user_namespace.model('User', {
+user_post_model = user_namespace.model('UserPost', {
     'id': fields.Integer(readonly=True),
     'email': fields.String(default='user@example.com', required=True),
     'password': fields.String(required=True, mask=True),
@@ -62,8 +62,35 @@ order_model = api_namespace.model('Order', {
         'image': fields.String(readonly=True, description='Coffee image')
     })),
     'pick_up_time': fields.DateTime(required=True, description='The pick up time', default=get_current_time()),
-    'user_id': fields.Integer(readonly=True, description='The ID of the user'),
-    'time_order_made': fields.DateTime(readonly=True, description='The order time'),
+    'user': fields.Nested(api_namespace.model('UserOrder', {
+        'id': fields.Integer(readonly=True, description='User identifier'),
+        'email': fields.String(readonly=True, description='User email'),
+        'smartphone_key': fields.String(description='User key for notifications')
+    })),
+    'time_order_made': fields.DateTime(readonly=True, description='The order time')
+})
+
+order_post_model = api_namespace.model('OrderPost', {
+    'id': fields.Integer(readonly=True, description='The order identifier'),
+    'status': fields.String(readonly=True, description='The order status', default='waiting'),
+    'name': fields.String(description='The client name', default='Ivan Ivanov'),
+    'cafe': fields.Nested(api_namespace.model('CafeOrder', {
+        'id': fields.Integer(readonly=True, description='The cafe identifier'),
+        'name': fields.String(description='The cafe name'),
+        'address': fields.String(readonly=True, description='The cafe address'),
+        'description': fields.String(readonly=True, description='The cafe description')
+    })),
+    'coffee': fields.Nested(api_namespace.model('CoffeeOrder', {
+        'id': fields.Integer(readonly=True, description='The coffee identifier'),
+        'name': fields.String(description='The coffee name'),
+        'description': fields.String(readonly=True, description='The coffee description'),
+        'cafe_id': fields.Integer(description='The ID of the cafe'),
+        'image': fields.String(readonly=True, description='Coffee image')
+    })),
+    'pick_up_time': fields.DateTime(required=True, description='The pick up time', default=get_current_time()),
+    'user_id': fields.Integer(readonly=True, description='User identifier'),
+    'smartphone_key': fields.String(description='User phone key for notifications'),
+    'time_order_made': fields.DateTime(readonly=True, description='The order time')
 })
 
 order_put_model = api_namespace.model('OrderPut', {
