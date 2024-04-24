@@ -91,6 +91,7 @@ class UserModel(db.Model):
     email = Column(String(255), index=True, unique=True)
     password = Column(String(255), index=True)
     role = Column(String(45), index=True)
+    smartphone_key = Column(String(255), index=True)
     cafe_id = Column(Integer, ForeignKey("cafe.id"))
 
     cafe = relationship("CafeModel", back_populates="users")
@@ -105,6 +106,7 @@ class UserModel(db.Model):
             "id": self.id,
             "email": self.email,
             "role": self.role,
+            "smartphone_key": self.smartphone_key,
             "cafe_id": self.cafe_id
         }
 
