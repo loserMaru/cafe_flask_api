@@ -25,6 +25,19 @@ class CafeSchema(Schema):
 cafe_schema = CafeSchema()
 
 
+class CafeKeySchema(Schema):
+    id = fields.Integer()
+    name = fields.String()
+    address = fields.String()
+    description = fields.String()
+    image = fields.String()
+    star = fields.Float()
+    cafe_key = fields.String()
+
+
+cafe_key_schema = CafeKeySchema()
+
+
 class CoffeeSchema(Schema):
     id = fields.Integer()
     name = fields.String()

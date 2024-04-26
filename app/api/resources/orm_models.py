@@ -17,6 +17,7 @@ class CafeModel(db.Model):
     description = Column(Text, index=True)
     image = Column(Text, index=True)
     star = db.Column(db.Float(), nullable=False)
+    cafe_key = db.Column(db.String(255), nullable=True)
 
     orders = relationship("OrderModel", back_populates="cafe")
     coffee = relationship("CoffeeModel", back_populates="cafe")
