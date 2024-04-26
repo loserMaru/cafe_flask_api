@@ -36,7 +36,8 @@ class CafeModel(db.Model):
             'address': self.address,
             'description': self.description,
             'image': self.image,
-            'star': self.star
+            'star': self.star,
+            'cafe_key': self.cafe_key
         }
 
 

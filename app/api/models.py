@@ -28,7 +28,8 @@ cafe_model = api_namespace.model('Cafe', {
     'address': fields.String(required=True, description='The cafe address'),
     'description': fields.String(required=True, description='The cafe description'),
     'image': fields.String(required=False, description='Cafe image'),
-    'star': fields.Float(required=False, description="Cafe's rating")
+    'star': fields.Float(required=False, description="Cafe's rating"),
+    'cafe_key': fields.String(readonly=True, description='Cafe key')
 })
 
 cafe_key_model = api_namespace.model('CafeKey', {
