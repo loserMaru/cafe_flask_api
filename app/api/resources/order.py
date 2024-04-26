@@ -6,6 +6,7 @@ from flask_restx import Resource
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
+from app import sio
 from app.database import db
 
 from app.api import order_namespace
@@ -13,6 +14,17 @@ from app.api.models import order_model, order_put_model, order_post_model
 from app.utils.time_utils import get_current_time
 from app.api.marshmallow.schemas import order_schema
 from app.api.resources.orm_models import OrderModel, CoffeeModel, CafeModel, SubscriptionModel, UserModel
+
+
+# def on_order_update(data):
+#     print(data)
+
+# @sio.on('order_updated')
+# def send_order_update(order_id):
+#     order = OrderModel.query.get(order_id)
+#     if order:
+#         sio.emit('order_update', order_schema.dump(order))
+#         print(f"Sent order update for order ID: {order_id}")
 
 
 @order_namespace.route('/')
@@ -167,6 +179,13 @@ class Order(Resource):
         for key, value in data.items():
             setattr(order, key, value)
         db.session.commit()
+
+        orders = OrderModel.query.all()
+        order_data = order_schema.dump(orders, many=True)
+        sio.emit('order_update', order_data)
+        # sio.on('order_update', on_order_update(order_data))
+        # sio.emit('order_update', order_data)
+
         return order_schema.dump(order)
 
 
