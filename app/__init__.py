@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from flask_jwt_extended.exceptions import NoAuthorizationError
 
 from app.api import api
-from app.utils import jwt
+from app.utils import jwt, sio
 from app.database import db
 from app.api.resources.cafe import CafeList, Cafe, UploadCafePic
 from app.api.resources.user import UserList, User
@@ -22,6 +22,7 @@ def create_app():
     db.init_app(app)
     api.init_app(app)
     jwt.init_app(app)
+    sio.init_app(app)
 
     # Регистрация ресурсов API
     api.add_resource(UserLogin, '/login')
