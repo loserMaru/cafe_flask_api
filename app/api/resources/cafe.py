@@ -5,12 +5,12 @@ from flask import request
 from flask_restx import Resource
 from imgurpython import ImgurClient
 from sqlalchemy.exc import IntegrityError
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from app.api.marshmallow.schemas import cafe_schema
+from app.api.marshmallow.schemas import cafe_schema, cafe_key_schema
 from app.database import db
 from app.api import cafe_namespace
-from app.api.models import cafe_model
+from app.api.models import cafe_model, cafe_key_model
 from app.api.resources.orm_models import CafeModel
 
 
@@ -142,3 +142,37 @@ class UploadCafePic(Resource):
         db.session.commit()
 
         return cafe_schema.dump(cafe), 201
+
+
+@cafe_namespace.route('/cafe_key')
+class CafeKey(Resource):
+    @cafe_namespace.doc(security='jwt')
+    @jwt_required()
+    @cafe_namespace.expect(cafe_key_model)
+    def post(self):
+        """Добавление нового ключа"""
+        role = get_jwt_identity().get('role')
+        cafe_id = get_jwt_identity().get('cafe_id')
+        data = request.json
+
+        if role != 'admin':
+            cafe_namespace.abort(403, "У вас нет прав для выполнения данного действия")
+
+        if not cafe_id:
+            cafe_namespace.abort(403, "У вас нет прав для выполнения данного действия")
+
+        new_cafe_key = data.get('cafe_key')
+
+        cafe = CafeModel.query.get(cafe_id)
+        if not cafe:
+            cafe_namespace.abort(404, "Кафе не найдено")
+
+        cafe.cafe_key = new_cafe_key
+
+        try:
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError as e:
+            db.session.rollback()
+            return {'msg': 'Ошибка'}, 200
+
+        return cafe_key_schema.dump(cafe), 201
