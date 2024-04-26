@@ -4,7 +4,7 @@ from flask_jwt_extended.exceptions import NoAuthorizationError
 from app.api import api
 from app.utils import jwt, sio
 from app.database import db
-from app.api.resources.cafe import CafeList, Cafe, UploadCafePic
+from app.api.resources.cafe import CafeList, Cafe, UploadCafePic, CafeKey
 from app.api.resources.user import UserList, User
 from app.api.resources.order import OrderList, Order
 from app.api.resources.coffee import CoffeeList, Coffee, UploadCoffeePic
@@ -41,6 +41,7 @@ def create_app():
     api.add_resource(CafeList, '/cafe')
     api.add_resource(Cafe, '/cafe/<int:cafe_id>')
     api.add_resource(UploadCafePic, '/cafe/<int:cafe_id>/pic')
+    api.add_resource(CafeKey, '/cafe/cafe_key')
 
     # Регистрация ресурсов API для заказов
     api.add_resource(OrderList, '/orders')
