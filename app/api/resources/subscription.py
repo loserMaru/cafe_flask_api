@@ -34,7 +34,6 @@ class SubscriptionList(Resource):
     def post(self):
         """Создание подписки"""
         data = request.json
-        print(data)
         current_user = get_jwt_identity()
         user_id = current_user.get('id')
 

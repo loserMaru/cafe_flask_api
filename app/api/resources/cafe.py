@@ -120,7 +120,6 @@ class UploadCafePic(Resource):
         client = ImgurClient(client_id, client_secret)
 
         image = request.files.get('image')
-        print(image)
         if not image:
             return {'message': 'No image uploaded'}, 400
 
