@@ -166,7 +166,6 @@ class Order(Resource):
         """Обновление информации о заказе"""
         current_user = get_jwt_identity()
         user_role = current_user.get('role')
-        print(user_role)
 
         if user_role != 'admin':
             order_namespace.abort(403, "У вас нет прав для выполнения данного действия")
@@ -176,6 +175,12 @@ class Order(Resource):
             order_namespace.abort(404, "Вид кофе не найден")
 
         data = request.json
+        if data['status'] == 'reject':
+            user = UserModel.query.get(order.user_id)
+            subscription = SubscriptionModel.query.filter(SubscriptionModel.user == user).first()
+            if subscription:
+                subscription.quantity += 1
+                db.session.commit()
         for key, value in data.items():
             setattr(order, key, value)
         db.session.commit()
