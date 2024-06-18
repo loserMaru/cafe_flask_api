@@ -175,3 +175,32 @@ class CafeKey(Resource):
             return {'msg': 'Ошибка'}, 200
 
         return cafe_key_schema.dump(cafe), 201
+
+
+@cafe_namespace.route('/<int:cafe_id>/pic/upload')
+class UploadLocalCafePic(Resource):
+    @cafe_namespace.doc(security='jwt')
+    @jwt_required()
+    @cafe_namespace.expect(cafe_namespace.parser().add_argument('image', location='files', type='file'))
+    def put(self, cafe_id):
+        """Upload picture for profile by its ID"""
+        cafe = CafeModel.query.filter_by(id=cafe_id).first()
+        if not cafe:
+            cafe_namespace.abort(404, 'Профиль не найден')
+
+        image = request.files.get('image')
+        if not image:
+            return {'message': 'No image uploaded'}, 400
+
+        # Save the image to a directory in the project
+        upload_folder = os.path.join(os.getcwd(), 'uploaded_images')
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+        image_path = os.path.join(upload_folder, image.filename)
+        image.save(image_path)
+
+        # Update profile picture path
+        cafe.image = image_path
+        db.session.commit()
+
+        return cafe_schema.dump(cafe), 200
